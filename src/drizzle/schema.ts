@@ -15,8 +15,8 @@ import {
 export const users = pgTable(
   'users',
   {
-    id: bigserial({ mode: 'bigint' }).primaryKey(),
-    name: varchar('email', { length: 255 }),
+    id: bigserial({ mode: 'number' }).primaryKey(),
+    name: varchar('name', { length: 255 }),
     email: varchar('email', { length: 350 }).unique(),
     morph_id: bigint({ mode: 'bigint' }).default(sql`NULL`),
     morph_model: varchar('morph_model', { length: 255 }).default(sql`NULL`),
