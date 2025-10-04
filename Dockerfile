@@ -8,10 +8,6 @@ RUN npm install
 
 COPY . .
 
-COPY .env ./
-
-RUN npm run build
-
 EXPOSE 3001
 
-CMD ["npm", "run", "start:prod"]
+CMD ["sh", "-c", "npm run db:migrate && npm run start:dev"]

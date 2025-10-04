@@ -32,7 +32,8 @@ services:
       db:
         condition: service_healthy
     volumes:
-      - ./src:/app/src:cached
+      - ./:/usr/src/app
+      - /usr/src/app/node_modules
     networks:
       - academy_net
 
