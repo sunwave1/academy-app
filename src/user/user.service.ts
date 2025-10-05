@@ -1,5 +1,5 @@
 import { Inject, Injectable, NotFoundException } from '@nestjs/common';
-import { eq } from 'drizzle-orm';
+import { and, eq, isNull } from 'drizzle-orm';
 import { users } from '../drizzle/schema';
 import { DrizzleAsyncProvider } from '../drizzle/drizzle.provider';
 import { NodePgDatabase } from 'drizzle-orm/node-postgres';
@@ -16,17 +16,24 @@ export class UserService {
   ) {}
   async FindByEmail(email: string) {
     return this.db.query.users.findFirst({
-      where: eq(users.email, email),
+      where: and(eq(users.email, email), isNull(users.deleted_at)),
     });
   }
   async ExistsByEmail(email: string): Promise<boolean> {
-    const exists = await this.db.query.users.findFirst({
+    return !!(await this.db.query.users.findFirst({
       columns: {
         email: true,
       },
-      where: eq(users.email, email),
-    });
-    return !!exists;
+      where: and(eq(users.email, email), isNull(users.deleted_at)),
+    }));
+  }
+  async ExistsById(id: number): Promise<boolean> {
+    return !!(await this.db.query.users.findFirst({
+      columns: {
+        email: true,
+      },
+      where: and(eq(users.id, id), isNull(users.deleted_at)),
+    }));
   }
   async CreateUser(user: CreateUserDTO) {
     const exists: boolean = await this.ExistsByEmail(user.email);
@@ -50,21 +57,17 @@ export class UserService {
     return result;
   }
   async Delete(id: number): Promise<{ id: number }> {
-    const exists = await this.db.query.users.findFirst({
-      columns: {
-        id: true,
-      },
-      where: eq(users.id, id),
-    });
+    const exists = await this.ExistsById(id);
 
     if (!exists) {
       throw new NotFoundException('Úsuario não encontrado');
     }
 
     const [result] = await this.db
-      .delete(users)
+      .update(users)
+      .set({ deleted_at: new Date() })
       .where(eq(users.id, id))
-      .returning({ id: users.id });
+      .returning();
 
     return result;
   }
