@@ -2,8 +2,9 @@ import { Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { DrizzleAsyncProvider } from '../../drizzle/drizzle.provider';
 import { NodePgDatabase } from 'drizzle-orm/node-postgres';
 import * as schema from '../../drizzle/schema';
-import { InsertNewUser, UpdateUser, users } from '../../drizzle/schema';
+import { users } from '../../drizzle/schema';
 import { eq } from 'drizzle-orm';
+import { CreateUserDTO, UpdateUserDTO } from '../dtos/CreateUser';
 
 @Injectable()
 export class ProfileUserService {
@@ -11,7 +12,7 @@ export class ProfileUserService {
     @Inject(DrizzleAsyncProvider)
     private db: NodePgDatabase<typeof schema>,
   ) {}
-  async Create(user: InsertNewUser): Promise<InsertNewUser> {
+  async Create(user: CreateUserDTO) {
     const exists = await this.db.query.users.findFirst({
       columns: {
         email: true,
@@ -24,15 +25,15 @@ export class ProfileUserService {
 
     const [result] = await this.db.insert(users).values(user).returning();
 
-    return result as InsertNewUser;
+    return result;
   }
-  async Update(user: UpdateUser): Promise<UpdateUser> {
+  async Update(user: UpdateUserDTO) {
     const [result] = await this.db
       .update(users)
       .set(user)
-      .where(eq(users.email, user.email ?? ''))
+      .where(eq(users.email, user.email))
       .returning();
-    return result as UpdateUser;
+    return result;
   }
   async FindOne(id: number) {
     return this.db.query.users.findFirst({
