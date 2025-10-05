@@ -11,8 +11,6 @@ import {
   bigint,
   index,
 } from 'drizzle-orm/pg-core';
-import { createInsertSchema, createUpdateSchema } from 'drizzle-zod';
-import { z } from 'zod';
 
 export const users = pgTable(
   'users',
@@ -48,51 +46,3 @@ export const users = pgTable(
     index('cpf_cnpj_idx').on(table.cpf_cnpj),
   ],
 );
-
-export const CreateUserSchema = createInsertSchema(users, {
-  name: (schema) =>
-    schema
-      .min(5, { message: 'Nome deve conter no minimo 5 caracteres' })
-      .max(255, { message: 'Nome deve conter no maximo 255 caracteres' }),
-  email: (schema) => schema.email({ message: 'Email deve ser correto' }),
-  password: (schema) =>
-    schema
-      .min(5, { message: 'Senha deve conter no minimo 5 caracteres' })
-      .max(255, { message: 'Senha deve conter no maximo 255 caracteres' })
-      .regex(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).+$/, {
-        message:
-          'Password deve conter pelo menos uma letra maiúscula, uma letra minúscula e um número',
-      }),
-});
-
-export const UpdateUserSchema = createUpdateSchema(users, {
-  name: (schema) =>
-    schema
-      .min(5, { message: 'Nome deve conter no minimo 5 caracteres' })
-      .max(255, { message: 'Nome deve conter no maximo 255 caracteres' }),
-  email: (schema) => schema.email({ message: 'Email deve ser correto' }),
-  password: (schema) =>
-    schema
-      .min(5, { message: 'Password deve ser correto' })
-      .max(255, { message: 'Password deve ser correto' })
-      .regex(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).+$/, {
-        message:
-          'Password deve conter pelo menos uma letra maiúscula, uma letra minúscula e um número',
-      }),
-  phone: (schema) =>
-    schema.regex(/^(55)?([1-9]{2})?(\d{4,5})(\d{4})$/, {
-      message: 'Formato do telefone está incorreto',
-    }),
-  second_phone: (schema) =>
-    schema.regex(/^(55)?([1-9]{2})?(\d{4,5})(\d{4})$/, {
-      message: 'Formato do telefone está incorreto',
-    }),
-  cpf_cnpj: (schema) =>
-    schema.regex(
-      /(^\d{3}\.\d{3}\.\d{3}-\d{2}$)|(^\d{2}\.\d{3}\.\d{3}\/\d{4}-\d{2}$)/,
-      { message: 'CPF ou CNPJ inválido' },
-    ),
-});
-
-export type InsertNewUser = z.infer<typeof CreateUserSchema>;
-export type UpdateUser = z.infer<typeof UpdateUserSchema>;
