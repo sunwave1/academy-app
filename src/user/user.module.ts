@@ -1,7 +1,6 @@
 import { Module } from '@nestjs/common';
 import { DrizzleModule } from '../drizzle/drizzle.module';
 import { ProfileUserController } from './profile/profile.controller';
-import { ProfileUserService } from './profile/profile.service';
 import { AuthenticationController } from './authentication/authentication.controller';
 import { AuthenticationService } from './authentication/authentication.service';
 import { PassportModule } from '@nestjs/passport';
@@ -27,12 +26,7 @@ import { ConfigService } from '@nestjs/config';
     }),
   ],
   controllers: [ProfileUserController, AuthenticationController],
-  providers: [
-    ProfileUserService,
-    AuthenticationService,
-    JwtStrategy,
-    UserService,
-  ],
+  providers: [AuthenticationService, JwtStrategy, UserService],
   exports: [PassportModule, JwtModule],
 })
 export class UserModule {}
