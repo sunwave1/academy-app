@@ -1,4 +1,4 @@
-import { sql } from 'drizzle-orm';
+import { relations, sql } from 'drizzle-orm';
 import {
   bigserial,
   varchar,
@@ -62,3 +62,28 @@ export const teachers = pgTable('teachers', {
   document: varchar('document', { length: 255 }).notNull().unique(),
   ...timestamps,
 });
+
+export const userRelations = relations(users, ({ one }) => ({
+  student: one(students, {
+    fields: [users.id],
+    references: [students.user_id],
+  }),
+  teacher: one(teachers, {
+    fields: [users.id],
+    references: [teachers.user_id],
+  }),
+}));
+
+export const studentRelations = relations(students, ({ one }) => ({
+  user: one(users, {
+    fields: [students.user_id],
+    references: [users.id],
+  }),
+}));
+
+export const teacherRelations = relations(teachers, ({ one }) => ({
+  user: one(users, {
+    fields: [teachers.user_id],
+    references: [users.id],
+  }),
+}));
