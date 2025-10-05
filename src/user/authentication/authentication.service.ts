@@ -24,10 +24,14 @@ export class AuthenticationService {
       throw new UnauthorizedException();
     }
 
-    const authorization = this.jwtService.sign(user);
+    const authorization = this.jwtService.sign(
+      {
+        sub: user.id,
+      },
+      { expiresIn: process.env.EXPIRESIN ?? '2h' },
+    );
 
     return {
-      expiresIn: process.env.EXPIRESIN,
       accessToken: authorization,
       user,
     };

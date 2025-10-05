@@ -21,7 +21,7 @@ import { ConfigService } from '@nestjs/config';
       inject: [ConfigService],
       useFactory: (config: ConfigService) => ({
         secret: config.get<string>('SECRETKEY', 'fallback_secret'),
-        signOptions: { expiresIn: config.get<string>('EXPIRESIN', '1h') },
+        signOptions: { expiresIn: config.get<string>('EXPIRESIN', '2h') },
       }),
     }),
   ],
