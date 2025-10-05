@@ -1,44 +1,17 @@
 import {
+  IsBooleanString,
+  IsDate,
   IsEmail,
   IsNotEmpty,
-  Matches,
-  IsBooleanString,
-  Length,
   IsOptional,
-  Min,
+  Length,
+  Matches,
   Max,
-  IsDate,
-  MinDate,
   MaxDate,
+  Min,
+  MinDate,
 } from 'class-validator';
 import { Type } from 'class-transformer';
-
-export class CreateUserDTO {
-  @IsNotEmpty()
-  @Length(5, 255, {
-    message: 'Senha deve conter de 5 a 255 caracteres',
-  })
-  name: string;
-
-  @IsEmail()
-  email: string;
-
-  @IsNotEmpty()
-  @Length(5, 255, {
-    message: 'Senha deve conter de 5 a 255 caracteres',
-  })
-  @Matches(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).+$/, {
-    message:
-      'Password deve conter pelo menos uma letra maiúscula, uma letra minúscula e um número',
-  })
-  password: string;
-
-  @IsBooleanString({
-    message:
-      'Você deve marcar se gostaria de receber nossos emails de oportunidades exclusivas!',
-  })
-  receive_marketing: boolean;
-}
 
 export class UpdateUserDTO {
   @IsNotEmpty()
